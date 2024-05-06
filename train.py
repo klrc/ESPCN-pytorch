@@ -74,6 +74,7 @@ if __name__ == '__main__':
                 inputs = inputs.to(device)
                 labels = labels.to(device)
 
+                # print(inputs.shape, labels.shape, args.scale)
                 preds = model(inputs)
 
                 loss = criterion(preds, labels)
@@ -87,7 +88,7 @@ if __name__ == '__main__':
                 t.set_postfix(loss='{:.6f}'.format(epoch_losses.avg))
                 t.update(len(inputs))
 
-        torch.save(model.state_dict(), os.path.join(args.outputs_dir, 'epoch_{}.pth'.format(epoch)))
+        # torch.save(model.state_dict(), os.path.join(args.outputs_dir, 'epoch_{}.pth'.format(epoch)))
 
         model.eval()
         epoch_psnr = AverageMeter()
@@ -109,6 +110,5 @@ if __name__ == '__main__':
             best_epoch = epoch
             best_psnr = epoch_psnr.avg
             best_weights = copy.deepcopy(model.state_dict())
-
-    print('best epoch: {}, psnr: {:.2f}'.format(best_epoch, best_psnr))
-    torch.save(best_weights, os.path.join(args.outputs_dir, 'best.pth'))
+            # print('best epoch: {}, psnr: {:.2f}'.format(best_epoch, best_psnr))
+            torch.save(best_weights, os.path.join(args.outputs_dir, 'best.pt'))

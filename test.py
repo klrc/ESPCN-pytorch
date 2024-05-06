@@ -31,6 +31,7 @@ if __name__ == '__main__':
     model.eval()
 
     image = pil_image.open(args.image_file).convert('RGB')
+    image_name = args.image_file.split("/")[-1].split(".")[0]
 
     image_width = (image.width // args.scale) * args.scale
     image_height = (image.height // args.scale) * args.scale
@@ -38,7 +39,7 @@ if __name__ == '__main__':
     hr = image.resize((image_width, image_height), resample=pil_image.BICUBIC)
     lr = hr.resize((hr.width // args.scale, hr.height // args.scale), resample=pil_image.BICUBIC)
     bicubic = lr.resize((lr.width * args.scale, lr.height * args.scale), resample=pil_image.BICUBIC)
-    bicubic.save(args.image_file.replace('.', '_bicubic_x{}.'.format(args.scale)))
+    bicubic.save(f"outputs/{image_name}_bicubic_x{args.scale}.png")
 
     lr, _ = preprocess(lr, device)
     hr, _ = preprocess(hr, device)
@@ -55,4 +56,4 @@ if __name__ == '__main__':
     output = np.array([preds, ycbcr[..., 1], ycbcr[..., 2]]).transpose([1, 2, 0])
     output = np.clip(convert_ycbcr_to_rgb(output), 0.0, 255.0).astype(np.uint8)
     output = pil_image.fromarray(output)
-    output.save(args.image_file.replace('.', '_espcn_x{}.'.format(args.scale)))
+    output.save(f"outputs/{image_name}_srcnn_x{args.scale}.png")
